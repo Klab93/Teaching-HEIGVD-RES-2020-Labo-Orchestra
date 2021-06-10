@@ -1,13 +1,11 @@
 const dgram = require("dgram");
 const server = dgram.createSocket('udp4');
-import {v5 as uuidv5} from 'uuid';
 
-let Musician = (instrument) => {
-    this.uuid = uuidv5()
+function Musician(instrument) {
     this.instrument = instrument;
 
     let data = {
-        uuid : this.uuid,
+        uuid : "this.uuid",
         instrument : this.instrument,
         activeSince : Date.now()
     }
@@ -15,10 +13,18 @@ let Musician = (instrument) => {
     let payload = JSON.stringify(data)
     let message = new Buffer(payload);
 
-    server.send(message, 0, message.length, 2205, 'localhost',(err, bytes) => {
-        console.log("Sending payload: " + payload + " via port " + s.address().port);
+    server.send(message, 0, message.length, 9900, '239.255.22.5',(err, bytes) => {
+        console.log("Sending payload: " + payload + " via port " + server.address().port);
     });
 
-    setInterval(this.update.bind(this), 500);
+    function play() {
+        console.log("tititi")
+    }
+
+    setInterval(play, 1000);
 }
+
+const instrument = process.argv[2];
+
+const m1 = new Musician(instrument);
 
