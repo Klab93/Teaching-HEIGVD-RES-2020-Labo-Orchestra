@@ -3,7 +3,7 @@ const net = require("net");
 const UDPserver = dgram.createSocket('udp4');
 
 
-let musicians = [];
+const musicians = new Map();
 
 UDPserver.bind(9900, () => {
     console.log("Joining multicast group");
@@ -13,13 +13,20 @@ UDPserver.bind(9900, () => {
 
 UDPserver.on('message', (msg, rinfo) => {
     console.log(`server got: ${msg} from ${rinfo.address}:${rinfo.port}`);
-    musicians.push(JSON.parse(msg));
+    const json = JSON.parse(msg);
+
+    musicians.set(json.uuid, {
+        uuid : json.uuid,
+        instrument : json.instrument,
+        activeSince : new Date()
+    });
+
 });
 
 const TCPServer = net.createServer((socket) => {
 
     console.log("Server listen on port 2205")
-    socket.write(JSON.stringify(musicians));
+    socket.write(JSON.stringify(Array.from(musicians.values())));
 
     socket.on("error", (err) => {
         console.log(`Error: ${err}`);
@@ -28,3 +35,13 @@ const TCPServer = net.createServer((socket) => {
 
 TCPServer.listen(2205, "localhost");
 
+setInterval(deleteOldMusicians, 1000);
+
+function deleteOldMusicians() {
+    musicians.forEach( musician => {
+        if (musician.activeSince.getTime() < new Date().getTime() - 5000) {
+          musicians.delete(musician.uuid);
+          console.log("delete element")
+        }
+    });
+}
