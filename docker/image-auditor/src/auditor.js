@@ -27,21 +27,17 @@ const TCPServer = net.createServer((socket) => {
 
     console.log("Server listen on port 2205")
     socket.write(JSON.stringify(Array.from(musicians.values())));
-
-    socket.on("error", (err) => {
-        console.log(`Error: ${err}`);
-    });
+    socket.end();
 });
 
-TCPServer.listen(2205, "localhost");
+TCPServer.listen(2205);
 
 setInterval(deleteOldMusicians, 1000);
 
 function deleteOldMusicians() {
     musicians.forEach( musician => {
-        if (musician.activeSince.getTime() < new Date().getTime() - 5000) {
+        if (musician.activeSince.getTime() < Date.now() - 5000) {
           musicians.delete(musician.uuid);
-          console.log("delete element")
         }
     });
 }
