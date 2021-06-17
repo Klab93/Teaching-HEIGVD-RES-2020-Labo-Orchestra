@@ -2,6 +2,9 @@ const dgram = require("dgram");
 const server = dgram.createSocket('udp4');
 const uuidLib = require('uuid');
 
+const UDPmulticastAddress = '239.255.22.5';
+const UDPPort = 9900;
+
 const songOfInstrument = {
     piano : "ti-ta-ti",
     trumpet : "pouet",
@@ -23,14 +26,9 @@ function Musician(instrument) {
 
     let payload = JSON.stringify(data)
     let message = new Buffer(payload);
-    /*
-    server.send(message, 0, message.length, 9900, '239.255.22.5',(err, bytes) => {
-        console.log("Sending payload: " + payload + " via port " + server.address().port);
-    });
-     */
 
     function play() {
-        server.send(message, 0, message.length, 9900, '239.255.22.5',(err, bytes) => {
+        server.send(message, 0, message.length, UDPPort, UDPmulticastAddress,(err, bytes) => {
             console.log("Sending payload: " + payload + " via port " + server.address().port);
         });
     }

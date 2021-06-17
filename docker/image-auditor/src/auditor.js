@@ -2,14 +2,16 @@ const dgram = require("dgram");
 const net = require("net");
 const UDPserver = dgram.createSocket('udp4');
 
+const UDPmulticastAddress = '239.255.22.5';
+const UDPPort = 9900;
+const TCPPort = 2205;
 
 const musicians = new Map();
 
-UDPserver.bind(9900, () => {
+UDPserver.bind(UDPPort, () => {
     console.log("Joining multicast group");
-    UDPserver.addMembership("239.255.22.5");
+    UDPserver.addMembership(UDPmulticastAddress);
 });
-
 
 UDPserver.on('message', (msg, rinfo) => {
     console.log(`server got: ${msg} from ${rinfo.address}:${rinfo.port}`);
@@ -30,7 +32,7 @@ const TCPServer = net.createServer((socket) => {
     socket.end();
 });
 
-TCPServer.listen(2205);
+TCPServer.listen(TCPPort);
 
 setInterval(deleteOldMusicians, 1000);
 
