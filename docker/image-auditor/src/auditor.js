@@ -8,6 +8,13 @@ const TCPPort = 2205;
 
 const musicians = new Map();
 
+const instrumentFromSong = new Map();
+instrumentFromSong.set('ti-ta-ti', 'piano');
+instrumentFromSong.set('pouet', 'trumpet');
+instrumentFromSong.set('trulu', 'flute');
+instrumentFromSong.set('gzi-gzi', 'violin');
+instrumentFromSong.set('boum-boum', 'drum');
+
 UDPserver.bind(UDPPort, () => {
     console.log("Joining multicast group");
     UDPserver.addMembership(UDPmulticastAddress);
@@ -19,7 +26,7 @@ UDPserver.on('message', (msg, rinfo) => {
 
     musicians.set(json.uuid, {
         uuid : json.uuid,
-        instrument : json.instrument,
+        instrument : instrumentFromSong.get(json.song),
         activeSince : new Date()
     });
 

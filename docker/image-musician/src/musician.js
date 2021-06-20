@@ -20,7 +20,6 @@ function Musician(instrument) {
 
     let data = {
         uuid : this.uuid,
-        instrument : this.instrument,
         song : this.song
     }
 
@@ -28,7 +27,7 @@ function Musician(instrument) {
     let message = new Buffer(payload);
 
     function play() {
-        server.send(message, 0, message.length, UDPPort, UDPmulticastAddress,(err, bytes) => {
+        server.send(message, 0, message.length, UDPPort, UDPmulticastAddress,() => {
             console.log("Sending payload: " + payload + " via port " + server.address().port);
         });
     }
@@ -38,5 +37,5 @@ function Musician(instrument) {
 
 const instrument = process.argv[2];
 
-const m1 = new Musician(instrument);
+new Musician(instrument);
 
